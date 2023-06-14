@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Pet Viewer</string>
+    <string name="welcome_msg">Welcome to PetViewer!</string>
+    <string name="bodytext">%1$s\n %2$s</string>
+    <string name="instructions">Click to select a pet!</string>
+    <string name="continueButton">Continue</string>
 </resources>

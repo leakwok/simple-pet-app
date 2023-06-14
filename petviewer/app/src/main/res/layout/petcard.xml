@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="pet"
+            type="com.example.petviewer.network.PetInfo" />
+    </data>
+
+    <Button
+        android:id="@+id/buttonPet"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:drawableStart="@{pet.photoDrawable}"
+        android:text="@string/bodytext"
+        />
+
+
+</layout>
