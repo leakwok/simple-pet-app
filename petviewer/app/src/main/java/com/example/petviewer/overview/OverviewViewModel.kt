@@ -8,34 +8,49 @@ import com.example.petviewer.network.PetInfo
 import com.example.petviewer.network.PetInfoApiGatherer
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 enum class PetInfoStatus{ LOADING, ERROR, DONE}
 
 class OverviewViewModel : ViewModel(){
 
-    private val _status = MutableLiveData<PetInfoStatus>()
+    private var _status = MutableLiveData<String>()//MutableLiveData<PetInfoStatus>()
+    val status: LiveData<String> = _status
 
-    val status: LiveData<PetInfoStatus> = _status
+    //val status: LiveData<PetInfoStatus> = _status
 
-    private val _photos = MutableLiveData<List<PetInfo>>()
+    private val _photos = MutableLiveData<PetInfo>()
+    val photos: LiveData<PetInfo> = _photos
 
-    val photos: LiveData<List<PetInfo>> = _photos
+//    private val _photos = MutableLiveData<PetInfo>()
+//    val photos: LiveData<PetInfo> = _photos
 
     init {
         getPetInfo()
     }
 
     private fun getPetInfo() {
-
         viewModelScope.launch {
-            _status.value = PetInfoStatus.LOADING
-            try {
-                _photos.value = PetApi.retrofitService.getInfo()
-                _status.value = PetInfoStatus.DONE
-            } catch (e: Exception) {
-                _status.value = PetInfoStatus.ERROR
-                _photos.value = listOf()
+            try{
+                //val listResult = PetApi.retrofitService.getInfos()
+                _photos.value = PetApi.retrofitService.getInfos()[0]
+                _status.value = "   First pet image URL : ${_photos.value!!.petPhotoUrl}"
+            } catch (e: Exception){
+                _status.value = "fail ${e.message}"
             }
+
+            println(_status.value)
+            //_status.value = PetInfoStatus.LOADING
+//            try {
+//                _photos.value = PetApi.retrofitService.getInfos()
+//                _status = "   First Mars image URL : ${_photos.value!!.petPhotoUrl}"
+//
+////                _photos.value = PetApi.retrofitService.getInfos()
+////                _status.value = PetInfoStatus.DONE
+//            } catch (e: Exception) {
+//                //_status.value = PetInfoStatus.ERROR
+//                //_photos.value = listOf()
+//            }
         }
     }
 }
