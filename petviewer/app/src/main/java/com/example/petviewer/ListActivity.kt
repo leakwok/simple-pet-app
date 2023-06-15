@@ -1,75 +1,100 @@
 package com.example.petviewer
 
-import android.graphics.drawable.BitmapDrawable
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.activity.viewModels
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
+import com.example.petviewer.databinding.PetlistBinding
 import com.example.petviewer.network.PetInfo
-import com.example.petviewer.overview.OverviewViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.InputStreamReader
+import java.lang.reflect.Type
+import java.net.URL
 
 
 class ListActivity: AppCompatActivity() {
     // initiate viewBinding
 //    private var _binding: ListActivity? = null
 //    private val binding get() = _binding!!
-
+    val containerLayout: LinearLayout
+        get() = findViewById(R.id.parent_linear_layout)
+    val inflater: LayoutInflater
+        get() = LayoutInflater.from(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.listfragment)
 
-        // get a reference to the already created main layout
-//        val listParent : LinearLayout = findViewById(R.id.petlist)
-//        val inflater: LayoutInflater = layoutInflater
-//        val cardChild: View = inflater.inflate(R.layout.petcard, listParent, false)
-//
-//        // make changes to our custom layout and its subviews
-//        cardChild.setBackgroundColor(ContextCompat.getColor(this, R.color.blue_main))
-//
-//        val card: Button = cardChild.findViewById(R.id.buttonPet) as Button
-//
-////        card.setCompoundDrawables(drawable.value, null, null, null)
-////        String.format(resources.getString(R.string.bodytext), name.value, description.value )
-//            //card.setText("hello")
-//        String.format(resources.getString(R.string.bodytext), "lea", "jiapeppenfndan jfhfdhdhadjklsdau")
-//            card.setCompoundDrawables(resources.getDrawable(R.drawable.ic_launcher_background), null, null, null)
-//
-//        // add our custom layout to the main layout
-//        listParent.addView(cardChild)
+        //_binding = PetlistBinding.inflate(layoutInflater)
+//        val model : OverviewViewModel by viewModels()
+//        for(pet : PetInfo in model.photos.value!!){
+//            addNewView(pet)
+//        }
+
+        // ViewGroup to add views
+
+
+        setContentView(R.layout.petlist)
+
+        //JsonTask().execute("")
+
+        // Link item in list here
+        val petTask: PetTask = PetTask()
+        petTask.execute()
 
     }
 
-//    private val viewModel: OverviewViewModel by viewModels()
-//    private val pet: LiveData<PetInfo> = Transformations.map(viewModel.photos) {
-//        it[it.size -1]
-//    }
-//
-//    private val name: LiveData<String> = Transformations.map(pet){
-//        it.petName
-//    }
-//
-//    private val description: LiveData<String> = Transformations.map(pet){
-//        it.petDescription
-//    }
-//
-//    private val drawable: LiveData<BitmapDrawable> = Transformations.map(pet){
-//        it.photoDrawable
-//    }
+    inner class PetTask : AsyncTask<Void, Void, String>() {
 
-    // This function is called after
-    // user clicks on addButton
-//    private fun addInfoCard() {
-//        // this method inflates the single item layout
-//        // inside the parent linear layout
-//        val inflater = LayoutInflater.from(this).inflate(R.layout.petcard, null)
-//        binding.parentLinearLayout.addView(inflater, binding.parentLinearLayout.childCount)
-//
-//    }
+        lateinit var petList: List<PetInfo>
 
+        @Deprecated("Deprecated in Java")
+        override fun doInBackground(vararg p0: Void?): String {
+            try {
+                val url: URL = URL("https://eulerity-hackathon.appspot.com/pets")
+                val reader: InputStreamReader = InputStreamReader(url.openStream())
+                val gson: Gson = Gson()
 
+                val petListType: Type = object : TypeToken<ArrayList<PetInfo>>() {}.type
+                petList = gson.fromJson(reader, petListType)
+                println(petList.size)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return "done"
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            for (pet: PetInfo in petList) {
+                val inflatedLayout: View =
+                    inflater.inflate(R.layout.petcard, containerLayout, false)
+
+                val nameText: TextView = inflatedLayout.findViewById(R.id.name)
+                nameText.text = pet.petName
+
+                val descriptionText: TextView = inflatedLayout.findViewById(R.id.description)
+                descriptionText.text = pet.petDescription
+
+                val photoView: ImageView = inflatedLayout.findViewById(R.id.petPic)
+                if (pet.petPhotoUrl != null) {
+                    val picUrl = URL(pet.petPhotoUrl)
+
+                    val bitmap: Bitmap =
+                        BitmapFactory.decodeStream(picUrl.openConnection().getInputStream())
+                    photoView.setImageBitmap(bitmap)
+                }
+
+                containerLayout.addView(inflatedLayout)
+            }
+        }
+
+    }
 }

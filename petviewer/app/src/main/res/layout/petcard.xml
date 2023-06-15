@@ -6,9 +6,6 @@
         <variable
             name="pet"
             type="com.example.petviewer.network.PetInfo" />
-        <variable
-            name="viewModel"
-            type="com.example.petviewer.overview.OverviewViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,15 +17,15 @@
             android:id="@+id/petPic"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            app:imageUrl="@{viewModel.photos.petPhotoUrl}"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
             android:id="@+id/name"
             android:layout_width="100dp"
             android:layout_height="20dp"
-            android:text="@{viewModel.photos.petName}"
+            android:text=""
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toRightOf="@+id/petPic"
@@ -38,7 +35,7 @@
             android:id="@+id/description"
             android:layout_width="70dp"
             android:layout_height="55dp"
-            android:text="@{viewModel.photos.petDescription}"
+            android:text=""
             android:textSize="11sp"
             app:layout_constraintLeft_toRightOf="@+id/petPic"
             app:layout_constraintTop_toBottomOf="@+id/name" />
