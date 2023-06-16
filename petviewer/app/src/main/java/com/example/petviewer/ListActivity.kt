@@ -53,6 +53,7 @@ class ListActivity: AppCompatActivity() {
     inner class PetTask : AsyncTask<Void, Void, String>() {
 
         lateinit var petList: List<PetInfo>
+        val petListPhotoMap = mutableMapOf<PetInfo, Bitmap>()
 
         @Deprecated("Deprecated in Java")
         override fun doInBackground(vararg p0: Void?): String {
@@ -61,9 +62,20 @@ class ListActivity: AppCompatActivity() {
                 val reader: InputStreamReader = InputStreamReader(url.openStream())
                 val gson: Gson = Gson()
 
-                val petListType: Type = object : TypeToken<ArrayList<PetInfo>>() {}.type
+                val petListType = object : TypeToken<ArrayList<PetInfo>>(){}.type
                 petList = gson.fromJson(reader, petListType)
                 println(petList.size)
+
+                //map each pet in petList to its bitmap representation of the image
+                for(pet: PetInfo in petList){
+                    println(pet.title)
+
+                    val picUrl = URL(pet.url)
+                    val bitmap: Bitmap =
+                        BitmapFactory.decodeStream(picUrl.openConnection().getInputStream())
+                    val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 75, 75, false)
+                    petListPhotoMap[pet] = resizedBitmap
+                }
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -71,27 +83,22 @@ class ListActivity: AppCompatActivity() {
             return "done"
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
+            println("starting post")
             for (pet: PetInfo in petList) {
+                println(pet.title)
                 val inflatedLayout: View =
                     inflater.inflate(R.layout.petcard, containerLayout, false)
 
                 val nameText: TextView = inflatedLayout.findViewById(R.id.name)
-                nameText.text = pet.petName
+                nameText.text = pet.title
 
                 val descriptionText: TextView = inflatedLayout.findViewById(R.id.description)
-                descriptionText.text = pet.petDescription
+                descriptionText.text = pet.description
 
                 val photoView: ImageView = inflatedLayout.findViewById(R.id.petPic)
-                if (pet.petPhotoUrl != null) {
-                    val picUrl = URL(pet.petPhotoUrl)
-
-                    val bitmap: Bitmap =
-                        BitmapFactory.decodeStream(picUrl.openConnection().getInputStream())
-                    photoView.setImageBitmap(bitmap)
-                }
-
+                photoView.setImageBitmap(petListPhotoMap[pet])
                 containerLayout.addView(inflatedLayout)
             }
         }

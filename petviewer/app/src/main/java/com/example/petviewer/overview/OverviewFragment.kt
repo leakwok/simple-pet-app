@@ -77,7 +77,7 @@ class OverviewFragment: Fragment() {
         var bitmap: BitmapDrawable? = null
         val loader = ImageLoader(requireContext())
         val req = ImageRequest.Builder(requireContext())
-            .data(pet.petPhotoUrl) // demo link
+            .data(pet.url) // demo link
 //            .target { result ->
 //                bitmap = (result as BitmapDrawable)
 //

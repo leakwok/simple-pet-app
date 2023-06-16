@@ -13,12 +13,11 @@ import coil.request.SuccessResult
 
 
 //@JsonClass(generateAdapter = true)
-class PetInfo(
-    val petName: String,
-    val petDescription: String,
-    val petPhotoUrl: String,
-
-
+data class PetInfo(
+    val title: String,
+    val description: String,
+    val url: String,
+    val created: String
     //var photoDrawable: BitmapDrawable? = null
 ){
 //    fun getName(): String {
