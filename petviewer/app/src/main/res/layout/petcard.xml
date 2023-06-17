@@ -11,7 +11,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:background="@drawable/rounded_border">
+        android:background="@drawable/rounded_border"
+        android:padding="11dp"
+        android:layout_margin="8dp"
+        >
 
         <ImageView
             android:id="@+id/petPic"
@@ -29,16 +32,20 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toRightOf="@+id/petPic"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"/>
 
         <TextView
             android:id="@+id/description"
-            android:layout_width="70dp"
+            android:layout_width="300dp"
             android:layout_height="55dp"
             android:text=""
             android:textSize="11sp"
             app:layout_constraintLeft_toRightOf="@+id/petPic"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
