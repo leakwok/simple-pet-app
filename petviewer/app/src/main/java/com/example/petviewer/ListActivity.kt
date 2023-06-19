@@ -79,14 +79,19 @@ class ListActivity: AppCompatActivity() {
                     val picUrl = URL(pet.url)
                     val bitmap: Bitmap =
                         BitmapFactory.decodeStream(picUrl.openConnection().getInputStream())
-                    val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 75, 75, false)
+                    val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false)
                     petListPhotoMap[pet] = resizedBitmap
+
 
                     nameText.text = pet.title
 
                     descriptionText.text = pet.description
 
                     photoView.setImageBitmap(petListPhotoMap[pet])
+
+                    inflatedLayout.setOnClickListener {
+                        onClick(it, pet.url, resizedBitmap)
+                    }
 
                     petViews.add(inflatedLayout)
                     progressBar.progress++
@@ -112,32 +117,38 @@ class ListActivity: AppCompatActivity() {
             }
         }
 
-        //probably don't need
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
 
-            override fun onQueryTextSubmit(query: String): Boolean {
-                TODO("Not yet implemented")
-            }
+    }
 
-            override fun onQueryTextChange(newText: String): Boolean {
-                TODO("update")
-//                updateSearchResults(newText)
-//                return true
-            }
+    private fun onClick(view: View, url: String, bitmap: Bitmap) {
+        val intent = Intent(this, EditActivity::class.java)
+        intent.putExtra("urlString", url)
+        intent.putExtra("bitmap", bitmap)
 
-        })
-
-
+        startActivity(intent)
     }
 
     private fun filterPets(query: String) {
         //find names and/or descriptions matching words in string
-        val searchWords = query.split(" ")
+        val searchWords = query.trim().split(" ")
 
-        for(i in petList.indices){
-            TODO("implement search functionality")
-            //if(petList[i].contains(searchWords))
+        val searchResults = petList.filter { petInfo ->
+            searchWords.any{word ->
+                petInfo.title.contains(word, ignoreCase = true) ||
+                        petInfo.description.contains(word, ignoreCase = true)
+            }
+        }.map { it.title }
+
+        val correspondingViews = petViews.filter { view ->
+            val viewName = view.findViewById<TextView>(R.id.name)
+            searchResults.contains(viewName.text)
         }
+
+        correspondingViews.forEach { view ->
+            // Do something with the corresponding views
+            containerLayout.addView(view)
+        }
+
 
     }
 
