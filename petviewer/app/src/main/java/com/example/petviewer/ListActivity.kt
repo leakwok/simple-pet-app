@@ -1,6 +1,8 @@
 package com.example.petviewer
 
 import android.annotation.SuppressLint
+import android.app.SearchManager
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
@@ -9,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.petviewer.databinding.PetlistBinding
@@ -35,14 +39,22 @@ class ListActivity: AppCompatActivity() {
     private val inflater: LayoutInflater
         get() = LayoutInflater.from(this)
 
+    private val petViews = mutableListOf<View>()
+    private lateinit var petList: List<PetInfo>
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         println("pet screen")
         setContentView(R.layout.petlist)
+
+        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
+        progressBar.visibility = View.VISIBLE
+
+        //load in pets and display all
         CoroutineScope(Dispatchers.Main).launch {
-            var petList: List<PetInfo>
             val petListPhotoMap = mutableMapOf<PetInfo, Bitmap>()
-            val petViews = mutableListOf<View>()
+
 
             //load in all content
             val result = withContext(Dispatchers.IO){
@@ -77,6 +89,8 @@ class ListActivity: AppCompatActivity() {
                     photoView.setImageBitmap(petListPhotoMap[pet])
 
                     petViews.add(inflatedLayout)
+                    progressBar.progress++
+                    Thread.sleep(100)
                 }
             }
 
@@ -87,8 +101,43 @@ class ListActivity: AppCompatActivity() {
 
         }
 
+        progressBar.visibility = View.GONE
+
+        val searchView = findViewById<SearchView>(R.id.search_bar)
+
+        if(Intent.ACTION_SEARCH == intent.action){
+            containerLayout.removeAllViews()
+            intent.getStringExtra(SearchManager.QUERY)?.also{
+                    query -> filterPets(query)
+            }
+        }
+
+        //probably don't need
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                TODO("update")
+//                updateSearchResults(newText)
+//                return true
+            }
+
+        })
 
 
+    }
+
+    private fun filterPets(query: String) {
+        //find names and/or descriptions matching words in string
+        val searchWords = query.split(" ")
+
+        for(i in petList.indices){
+            TODO("implement search functionality")
+            //if(petList[i].contains(searchWords))
+        }
 
     }
 

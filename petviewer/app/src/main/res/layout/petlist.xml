@@ -20,10 +20,26 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
+            <SearchView
+                android:id="@+id/search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/instructions"/>
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:progress="0"
+                android:max="21"
+                android:background="@color/yellow_secondary"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/search_bar"/>
+
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/instructions"
+                android:layout_below="@+id/search_bar"
                 >
 
                 <LinearLayout
